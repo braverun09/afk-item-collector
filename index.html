@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AFK Item Collector</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>AFK Item Collector</h1>
+
+    <p>Crystals: <span id="crystals">0</span></p>
+    <p>Level Alat: <span id="collectorLevel">1</span></p>
+    <p>Upgrade Cost: <span id="upgradeCost">10</span></p>
+
+    <button id="btnStartPause" onclick="toggleCollecting()">
+      Mulai Kumpul
+    </button>
+    <button onclick="upgradeCollector()">Upgrade Alat</button>
+
+    <div style="margin-top: 15px">
+      <button id="btnToggleAutoUpgrade" onclick="toggleAutoUpgrade()">
+        Auto Upgrade: OFF
+      </button>
+    </div>
+
+    <!-- Item langka -->
+    <div id="rareItem" style="display: none; margin-top: 20px">
+      🌟 <button onclick="claimRareItem()">Ambil Crystal Core (+100)</button>
+    </div>
+
+    <!-- Toko -->
+    <div id="shop" style="margin-top: 30px">
+      <h2>Toko</h2>
+      <button onclick="buyBooster()">Beli Booster x2 (50 Crystals)</button>
+      <div id="boosterStatus" style="margin-top: 10px">
+        Booster: Tidak aktif
+      </div>
+    </div>
+
+    <!-- Shop Limited Items -->
+    <div id="limitedShop" style="margin-top: 30px">
+      <h2>Shop Limited Items</h2>
+      <div
+        id="limitedItemsList"
+        style="display: flex; justify-content: center; gap: 15px"
+      ></div>
+    </div>
+
+    <!-- Display Skin -->
+    <div id="currentSkin" style="margin-top: 30px">
+      <h2>Item Terpakai</h2>
+      <img
+        id="skinImage"
+        src=""
+        alt="No item equipped"
+        style="
+          width: 100px;
+          height: 100px;
+          object-fit: contain;
+          border: 2px solid #333;
+          border-radius: 10px;
+        "
+      />
+      <p id="skinName">Tidak ada item</p>
+    </div>
+
+    <!-- Container animasi -->
+    <div
+      id="animationContainer"
+      style="position: relative; height: 120px; margin-top: 20px"
+    ></div>
+
+    <!-- Suara -->
+    <audio
+      id="soundUpgrade"
+      src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+      preload="auto"
+    ></audio>
+    <audio
+      id="soundRare"
+      src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
+      preload="auto"
+    ></audio>
+
+    <script src="script.js"></script>
+  </body>
+</html>

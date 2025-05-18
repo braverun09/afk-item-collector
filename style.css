@@ -1,0 +1,106 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 400px;
+  margin: 30px auto;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  background-color: #3b82f6;
+  color: white;
+  transition: transform 0.1s ease;
+}
+
+button:hover {
+  background-color: #2563eb;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Item langka button */
+#rareItem button {
+  background-color: gold;
+  color: black;
+  font-weight: bold;
+  border: 2px solid orange;
+  border-radius: 10px;
+  padding: 10px 20px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Limited Shop Items */
+.limited-item {
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  padding: 5px;
+  width: 80px;
+  text-align: center;
+  background-color: #e0e7ff;
+  transition: border-color 0.3s ease;
+}
+
+.limited-item:hover {
+  border-color: #3b82f6;
+}
+
+.limited-item.selected {
+  border-color: #2563eb;
+  background-color: #a5b4fc;
+}
+
+.limited-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+/* Animasi crystal fly */
+.crystal-fly {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: url("https://cdn-icons-png.flaticon.com/512/833/833314.png")
+    no-repeat center center;
+  background-size: contain;
+  pointer-events: none;
+  animation: flyToCounter 1s ease forwards;
+  opacity: 0.8;
+  z-index: 1000;
+}
+
+@keyframes flyToCounter {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(150px, -80px) scale(0.2);
+    opacity: 0;
+  }
+}
