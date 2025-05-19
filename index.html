@@ -9,79 +9,75 @@
   <body>
     <h1>AFK Item Collector</h1>
 
-    <p>Crystals: <span id="crystals">0</span></p>
-    <p>Level Alat: <span id="collectorLevel">1</span></p>
-    <p>Upgrade Cost: <span id="upgradeCost">10</span></p>
+    <div id="playerNameInputContainer" class="centered">
+      <label
+        >Nama Player:
+        <input id="playerNameInput" type="text" placeholder="Masukkan nama" />
+      </label>
+      <button onclick="setPlayerName()">Mulai</button>
+    </div>
 
-    <button id="btnStartPause" onclick="toggleCollecting()">
-      Mulai Kumpul
-    </button>
-    <button onclick="upgradeCollector()">Upgrade Alat</button>
+    <div id="gameUI" style="display: none">
+      <p>Crystals: <span id="crystals">0</span></p>
+      <p>Level Alat: <span id="collectorLevel">1</span></p>
+      <p>Upgrade Cost: <span id="upgradeCost">10</span></p>
 
-    <div style="margin-top: 15px">
+      <button id="btnStartPause" onclick="toggleCollecting()">
+        Mulai Kumpul
+      </button>
+      <button onclick="upgradeCollector()">Upgrade Alat</button>
       <button id="btnToggleAutoUpgrade" onclick="toggleAutoUpgrade()">
         Auto Upgrade: OFF
       </button>
-    </div>
 
-    <!-- Item langka -->
-    <div id="rareItem" style="display: none; margin-top: 20px">
-      🌟 <button onclick="claimRareItem()">Ambil Crystal Core (+100)</button>
-    </div>
-
-    <!-- Toko -->
-    <div id="shop" style="margin-top: 30px">
-      <h2>Toko</h2>
-      <button onclick="buyBooster()">Beli Booster x2 (50 Crystals)</button>
-      <div id="boosterStatus" style="margin-top: 10px">
-        Booster: Tidak aktif
+      <div id="rareItem" style="display: none; margin-top: 20px">
+        🌟 <button onclick="claimRareItem()">Ambil Crystal Core (+100)</button>
       </div>
+
+      <div id="shop" style="margin-top: 30px">
+        <h2>Toko</h2>
+        <button onclick="buyBooster()">Beli Booster x2 (50 Crystals)</button>
+        <div id="boosterStatus" class="booster-status">
+          Booster: Tidak aktif
+        </div>
+      </div>
+
+      <div id="limitedShop" style="margin-top: 30px">
+        <h2>Shop Limited Items</h2>
+        <div id="limitedItemsList" class="limited-items-list"></div>
+      </div>
+
+      <div id="currentSkin" style="margin-top: 30px">
+        <h2>Item Terpakai</h2>
+        <img id="skinImage" src="" alt="No item equipped" class="skin-image" />
+        <p id="skinName">Tidak ada item</p>
+      </div>
+
+      <div id="transferItemContainer" style="margin-top: 30px">
+        <h2>Transfer Item</h2>
+        <select id="transferItemSelect"></select>
+        <input
+          type="text"
+          id="transferToPlayer"
+          placeholder="Nama player tujuan"
+        />
+        <button onclick="transferItem()">Transfer</button>
+      </div>
+
+      <div id="leaderboardContainer" style="margin-top: 30px">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboardList"></ol>
+      </div>
+
+      <div id="animationContainer" class="animation-container"></div>
     </div>
 
-    <!-- Shop Limited Items -->
-    <div id="limitedShop" style="margin-top: 30px">
-      <h2>Shop Limited Items</h2>
-      <div
-        id="limitedItemsList"
-        style="display: flex; justify-content: center; gap: 15px"
-      ></div>
-    </div>
-
-    <!-- Display Skin -->
-    <div id="currentSkin" style="margin-top: 30px">
-      <h2>Item Terpakai</h2>
-      <img
-        id="skinImage"
-        src=""
-        alt="No item equipped"
-        style="
-          width: 100px;
-          height: 100px;
-          object-fit: contain;
-          border: 2px solid #333;
-          border-radius: 10px;
-        "
-      />
-      <p id="skinName">Tidak ada item</p>
-    </div>
-
-    <!-- Container animasi -->
-    <div
-      id="animationContainer"
-      style="position: relative; height: 120px; margin-top: 20px"
-    ></div>
-
-    <!-- Suara -->
     <audio
       id="soundUpgrade"
-      src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"
+      src="assets/sfx_upgrade.mp3"
       preload="auto"
     ></audio>
-    <audio
-      id="soundRare"
-      src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"
-      preload="auto"
-    ></audio>
+    <audio id="soundRare" src="assets/sfx_rare.mp3" preload="auto"></audio>
 
     <script src="script.js"></script>
   </body>

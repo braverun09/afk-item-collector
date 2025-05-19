@@ -1,106 +1,131 @@
 body {
   font-family: Arial, sans-serif;
-  max-width: 400px;
-  margin: 30px auto;
   text-align: center;
-  background-color: #f9f9f9;
+  background: #121212;
+  color: #eee;
+  margin: 0;
+  padding: 20px;
+}
+
+h1,
+h2 {
+  margin-bottom: 15px;
+}
+
+.centered {
+  margin-bottom: 30px;
 }
 
 button {
-  padding: 10px 20px;
-  font-size: 16px;
-  margin: 8px;
   cursor: pointer;
-  border-radius: 6px;
+  padding: 8px 15px;
+  margin: 5px;
+  background: #333;
   border: none;
-  background-color: #3b82f6;
-  color: white;
-  transition: transform 0.1s ease;
+  border-radius: 6px;
+  color: #eee;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #2563eb;
+  background: #555;
 }
 
-button:active {
-  transform: scale(0.95);
+input,
+select {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-left: 5px;
+  font-size: 16px;
 }
 
-/* Item langka button */
-#rareItem button {
-  background-color: gold;
-  color: black;
+.booster-status {
+  margin-top: 10px;
   font-weight: bold;
-  border: 2px solid orange;
-  border-radius: 10px;
-  padding: 10px 20px;
-  animation: pulse 1s infinite;
+  color: #aaffaa;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+.limited-items-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
 }
 
-/* Limited Shop Items */
 .limited-item {
-  cursor: pointer;
-  border: 2px solid transparent;
+  padding: 10px;
   border-radius: 10px;
-  padding: 5px;
-  width: 80px;
-  text-align: center;
-  background-color: #e0e7ff;
-  transition: border-color 0.3s ease;
-}
-
-.limited-item:hover {
-  border-color: #3b82f6;
-}
-
-.limited-item.selected {
-  border-color: #2563eb;
-  background-color: #a5b4fc;
+  width: 120px;
+  cursor: pointer;
+  color: #eee;
+  box-sizing: border-box;
+  background: #222;
+  user-select: none;
+  transition: box-shadow 0.3s ease;
 }
 
 .limited-item img {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   object-fit: contain;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.limited-item.common {
+  border: 2px solid #cccccc;
+  box-shadow: 0 0 5px #ccc;
+}
+
+.limited-item.rare {
+  border: 2px solid #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+}
+
+.limited-item.epic {
+  border: 2px solid #a78bfa;
+  box-shadow: 0 0 10px #a78bfa;
+}
+
+.limited-item.legend {
+  border: 2px solid #facc15;
+  box-shadow: 0 0 15px #facc15;
+  animation: glowLegend 2s ease-in-out infinite alternate;
+}
+
+@keyframes glowLegend {
+  from {
+    box-shadow: 0 0 15px #facc15;
+  }
+  to {
+    box-shadow: 0 0 25px #f59e0b;
+  }
+}
+
+.limited-item:hover {
+  box-shadow: 0 0 12px #fff;
+}
+
+.skin-image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 2px solid #333;
   margin-bottom: 5px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Animasi crystal fly */
-.crystal-fly {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  background: url("https://cdn-icons-png.flaticon.com/512/833/833314.png")
-    no-repeat center center;
-  background-size: contain;
-  pointer-events: none;
-  animation: flyToCounter 1s ease forwards;
-  opacity: 0.8;
-  z-index: 1000;
+.animation-container {
+  position: relative;
+  height: 120px;
+  margin-top: 20px;
 }
 
-@keyframes flyToCounter {
-  0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 0.8;
-  }
-  100% {
-    transform: translate(150px, -80px) scale(0.2);
-    opacity: 0;
-  }
+/* Scrollbar fix for select */
+select {
+  min-width: 200px;
 }
