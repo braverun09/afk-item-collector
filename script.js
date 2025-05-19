@@ -18,19 +18,19 @@ const limitedItems = [
     id: "sword",
     name: "Pedang Legendaris",
     price: 500,
-    img: "https://cdn-icons-png.flaticon.com/512/616/616408.png",
+    img: "assets/pedang-legend.png",
   },
   {
     id: "statue",
     name: "Patung Megah",
     price: 700,
-    img: "https://cdn-icons-png.flaticon.com/512/616/616574.png",
+    img: "assets/patung-megah.png",
   },
   {
     id: "shield",
     name: "Perisai Perkasa",
     price: 600,
-    img: "https://cdn-icons-png.flaticon.com/512/616/616563.png",
+    img: "assets/perisai-gila.png",
   },
 ];
 
