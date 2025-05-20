@@ -3,81 +3,102 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AFK Item Collector</title>
+    <title>AFK Item Collector - Megah</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>AFK Item Collector</h1>
-
-    <div id="playerNameInputContainer" class="centered">
-      <label
-        >Nama Player:
-        <input id="playerNameInput" type="text" placeholder="Masukkan nama" />
-      </label>
-      <button onclick="setPlayerName()">Mulai</button>
+    <div id="playerNameInputContainer" class="centered-container">
+      <div class="card">
+        <h2>Masukkan Nama Player</h2>
+        <input id="playerNameInput" type="text" placeholder="Nama kamu" />
+        <button id="btnSetName" class="btn-primary">Mulai</button>
+      </div>
     </div>
 
-    <div id="gameUI" style="display: none">
-      <p>Crystals: <span id="crystals">0</span></p>
-      <p>Level Alat: <span id="collectorLevel">1</span></p>
-      <p>Upgrade Cost: <span id="upgradeCost">10</span></p>
+    <div id="gameUI" class="container" style="display: none">
+      <header>
+        <h1>AFK Item Collector</h1>
+        <button id="btnLogout" class="btn-logout" title="Logout">Logout</button>
+      </header>
 
-      <button id="btnStartPause" onclick="toggleCollecting()">
-        Mulai Kumpul
-      </button>
-      <button onclick="upgradeCollector()">Upgrade Alat</button>
-      <button id="btnToggleAutoUpgrade" onclick="toggleAutoUpgrade()">
-        Auto Upgrade: OFF
-      </button>
-
-      <div id="rareItem" style="display: none; margin-top: 20px">
-        🌟 <button onclick="claimRareItem()">Ambil Crystal Core (+100)</button>
-      </div>
-
-      <div id="shop" style="margin-top: 30px">
-        <h2>Toko</h2>
-        <button onclick="buyBooster()">Beli Booster x2 (50 Crystals)</button>
-        <div id="boosterStatus" class="booster-status">
+      <section id="playerStats" class="stats-panel">
+        <div class="stat">
+          <div class="stat-label">Crystals</div>
+          <div class="stat-value" id="crystals">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Collector Level</div>
+          <div class="stat-value" id="collectorLevel">1</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Upgrade Cost</div>
+          <div class="stat-value" id="upgradeCost">10</div>
+        </div>
+        <div class="stat booster-status" id="boosterStatus">
           Booster: Tidak aktif
         </div>
-      </div>
+      </section>
 
-      <div id="limitedShop" style="margin-top: 30px">
-        <h2>Shop Limited Items</h2>
-        <div id="limitedItemsList" class="limited-items-list"></div>
-      </div>
+      <section class="controls">
+        <button id="btnStartPause" class="btn-accent" disabled>
+          Mulai Kumpul
+        </button>
+        <button id="btnUpgrade" class="btn-primary" disabled>
+          Upgrade Collector
+        </button>
+        <button id="btnToggleAutoUpgrade" class="btn-secondary" disabled>
+          Auto Upgrade: OFF
+        </button>
+        <button id="btnBuyBooster" class="btn-warning" disabled>
+          Beli Booster (50 Crystals)
+        </button>
+      </section>
 
-      <div id="currentSkin" style="margin-top: 30px">
-        <h2>Item Terpakai</h2>
-        <img id="skinImage" src="" alt="No item equipped" class="skin-image" />
-        <p id="skinName">Tidak ada item</p>
-      </div>
+      <section
+        id="rareItem"
+        title="Bonus 100 crystals sehari sekali"
+        class="rare-bonus"
+        style="display: none"
+      >
+        Bonus Harian: Klaim 100 Crystals
+      </section>
 
-      <div id="transferItemContainer" style="margin-top: 30px">
-        <h2>Transfer Item</h2>
-        <select id="transferItemSelect"></select>
-        <input
-          type="text"
-          id="transferToPlayer"
-          placeholder="Nama player tujuan"
-        />
-        <button onclick="transferItem()">Transfer</button>
-      </div>
+      <section class="skin-display">
+        <h3>Skin Terpasang</h3>
+        <div id="equippedItemDisplay" class="skin-container">
+          <img id="skinImage" class="skin-image" src="" alt="" />
+          <div id="skinName" class="skin-name">Tidak ada item</div>
+        </div>
+      </section>
 
-      <div id="leaderboardContainer" style="margin-top: 30px">
-        <h2>Leaderboard</h2>
-        <ol id="leaderboardList"></ol>
-      </div>
+      <section class="bag-section">
+        <h3>Tas Koleksi</h3>
+        <div id="bagItems" class="bag-items">Tas kosong</div>
+      </section>
 
-      <div id="animationContainer" class="animation-container"></div>
+      <section class="shop-section">
+        <h3>Toko Item Limited</h3>
+        <div id="limitedItemsList" class="shop-items"></div>
+      </section>
+
+      <section class="transfer-section">
+        <h3>Transfer Item ke Player Lain</h3>
+        <div class="transfer-controls">
+          <select id="transferItemSelect"></select>
+          <input
+            type="text"
+            id="transferToPlayerInput"
+            placeholder="Nama pemain tujuan"
+          />
+          <button id="btnTransfer" class="btn-primary">Transfer Item</button>
+        </div>
+      </section>
+
+      <section class="leaderboard-section">
+        <h3>Leaderboard</h3>
+        <ul id="leaderboardList" class="leaderboard-list"></ul>
+      </section>
     </div>
-
-    <audio
-      id="soundUpgrade"
-      src="assets/sfx_upgrade.mp3"
-      preload="auto"
-    ></audio>
-    <audio id="soundRare" src="assets/sfx_rare.mp3" preload="auto"></audio>
 
     <script src="script.js"></script>
   </body>
