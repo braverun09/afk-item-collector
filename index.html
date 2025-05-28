@@ -3,100 +3,84 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AFK Item Collector - Megah</title>
+    <title>AFK Item Collector - Cyber Style</title>
     <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <div id="playerNameInputContainer" class="centered-container">
-      <div class="card">
-        <h2>Masukkan Nama Player</h2>
-        <input id="playerNameInput" type="text" placeholder="Nama kamu" />
-        <button id="btnSetName" class="btn-primary">Mulai</button>
-      </div>
+    <div id="playerNameInputContainer" class="centered">
+      <h1>Masukkan Nama Pemain</h1>
+      <input type="text" id="playerNameInput" placeholder="Nama kamu..." />
+      <button id="btnSetName">Mulai</button>
     </div>
 
-    <div id="gameUI" class="container" style="display: none">
+    <div id="gameUI" style="display: none">
       <header>
         <h1>AFK Item Collector</h1>
-        <button id="btnLogout" class="btn-logout" title="Logout">Logout</button>
+        <div>
+          <button id="btnLogout">Logout</button>
+        </div>
       </header>
 
-      <section id="playerStats" class="stats-panel">
-        <div class="stat">
-          <div class="stat-label">Crystals</div>
-          <div class="stat-value" id="crystals">0</div>
+      <section id="stats" class="panel">
+        <div><strong>Nama:</strong> <span id="playerNameDisplay"></span></div>
+        <div><strong>Crystals:</strong> <span id="crystals">0</span></div>
+        <div>
+          <strong>Collector Level:</strong> <span id="collectorLevel">1</span>
         </div>
-        <div class="stat">
-          <div class="stat-label">Collector Level</div>
-          <div class="stat-value" id="collectorLevel">1</div>
+        <div>
+          <strong>Upgrade Cost:</strong> <span id="upgradeCost">10</span>
         </div>
-        <div class="stat">
-          <div class="stat-label">Upgrade Cost</div>
-          <div class="stat-value" id="upgradeCost">10</div>
-        </div>
-        <div class="stat booster-status" id="boosterStatus">
-          Booster: Tidak aktif
+        <div>
+          <strong>Booster:</strong> <span id="boosterStatus">Tidak aktif</span>
         </div>
       </section>
 
-      <section class="controls">
-        <button id="btnStartPause" class="btn-accent" disabled>
-          Mulai Kumpul
-        </button>
-        <button id="btnUpgrade" class="btn-primary" disabled>
-          Upgrade Collector
-        </button>
-        <button id="btnToggleAutoUpgrade" class="btn-secondary" disabled>
-          Auto Upgrade: OFF
-        </button>
-        <button id="btnBuyBooster" class="btn-warning" disabled>
-          Beli Booster (50 Crystals)
-        </button>
+      <section id="controls" class="panel">
+        <button id="btnStartPause">Mulai Kumpul</button>
+        <button id="btnUpgrade">Upgrade Collector</button>
+        <button id="btnToggleAutoUpgrade">Auto Upgrade OFF</button>
+        <button id="btnBuyBooster">Beli Booster (50 Crystals)</button>
       </section>
 
-      <section
-        id="rareItem"
-        title="Bonus 100 crystals sehari sekali"
-        class="rare-bonus"
-        style="display: none"
-      >
-        Bonus Harian: Klaim 100 Crystals
-      </section>
+      <section id="inventory" class="panel">
+        <h2>Tas Item</h2>
+        <div id="bagItems" class="item-list">Tas kosong</div>
 
-      <section class="skin-display">
-        <h3>Skin Terpasang</h3>
-        <div id="equippedItemDisplay" class="skin-container">
-          <img id="skinImage" class="skin-image" src="" alt="" />
-          <div id="skinName" class="skin-name">Tidak ada item</div>
+        <h3>Item Terpasang</h3>
+        <div id="equippedItemDisplay" class="equipped-item">
+          <img id="skinImage" src="" alt="" />
+          <div id="skinName">Tidak ada item</div>
         </div>
       </section>
 
-      <section class="bag-section">
-        <h3>Tas Koleksi</h3>
-        <div id="bagItems" class="bag-items">Tas kosong</div>
+      <section id="shop" class="panel">
+        <h2>Toko Biasa</h2>
+        <div id="regularShop" class="item-list"></div>
+
+        <h2>Toko Terbatas</h2>
+        <div id="limitedItemsList" class="item-list"></div>
       </section>
 
-      <section class="shop-section">
-        <h3>Toko Item Limited</h3>
-        <div id="limitedItemsList" class="shop-items"></div>
+      <section id="transfer" class="panel">
+        <h2>Transfer Item</h2>
+        <select id="transferItemSelect">
+          <option value="">- Tidak ada item -</option>
+        </select>
+        <input
+          type="text"
+          id="transferToPlayerInput"
+          placeholder="Nama pemain tujuan"
+        />
+        <button id="btnTransfer">Transfer</button>
       </section>
 
-      <section class="transfer-section">
-        <h3>Transfer Item ke Player Lain</h3>
-        <div class="transfer-controls">
-          <select id="transferItemSelect"></select>
-          <input
-            type="text"
-            id="transferToPlayerInput"
-            placeholder="Nama pemain tujuan"
-          />
-          <button id="btnTransfer" class="btn-primary">Transfer Item</button>
-        </div>
-      </section>
-
-      <section class="leaderboard-section">
-        <h3>Leaderboard</h3>
-        <ul id="leaderboardList" class="leaderboard-list"></ul>
+      <section id="leaderboard" class="panel">
+        <h2>Leaderboard</h2>
+        <ol id="leaderboardList"></ol>
       </section>
     </div>
 
