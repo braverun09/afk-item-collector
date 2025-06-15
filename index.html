@@ -2,86 +2,118 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AFK Item Collector - Cyber Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AFK Item Collector v1.2.1</title>
     <link rel="stylesheet" href="style.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap"
       rel="stylesheet"
     />
   </head>
   <body>
-    <div id="playerNameInputContainer" class="centered">
-      <h1>Masukkan Nama Pemain</h1>
-      <input type="text" id="playerNameInput" placeholder="Nama kamu..." />
-      <button id="btnSetName">Mulai</button>
+    <!-- Login Screen -->
+    <div id="playerNameInputContainer" class="centered-container">
+      <div class="card">
+        <h2>Masukkan Nama Pemain</h2>
+        <input type="text" id="playerNameInput" placeholder="Nama kamu..." />
+        <button id="btnSetName" class="btn-primary">Mulai Bermain</button>
+        <div class="version-text">Versi 1.2.1</div>
+      </div>
     </div>
 
+    <!-- Game UI -->
     <div id="gameUI" style="display: none">
-      <header>
-        <h1>AFK Item Collector</h1>
-        <div>
-          <button id="btnLogout">Logout</button>
+      <button id="btnLogout" class="btn-logout">Keluar</button>
+
+      <div class="container">
+        <!-- Header -->
+        <header>
+          <h1>AFK Item Collector</h1>
+          <div class="stat">
+            <div class="stat-label">Nama</div>
+            <div class="stat-value" id="playerDisplayName">-</div>
+          </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-panel">
+          <div class="stat">
+            <div class="stat-label">Crystals</div>
+            <div class="stat-value" id="crystals">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Level Kolektor</div>
+            <div class="stat-value" id="collectorLevel">1</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Biaya Upgrade</div>
+            <div class="stat-value" id="upgradeCost">10</div>
+          </div>
+          <div class="booster-status" id="boosterStatus">
+            Booster: Tidak aktif
+          </div>
         </div>
-      </header>
 
-      <section id="stats" class="panel">
-        <div><strong>Nama:</strong> <span id="playerNameDisplay"></span></div>
-        <div><strong>Crystals:</strong> <span id="crystals">0</span></div>
-        <div>
-          <strong>Collector Level:</strong> <span id="collectorLevel">1</span>
+        <!-- Kontrol -->
+        <div class="controls">
+          <button id="btnStartPause" class="btn-primary">Mulai Kumpul</button>
+          <button id="btnUpgrade" class="btn-secondary">Upgrade</button>
+          <button id="btnToggleAutoUpgrade" class="btn-accent">
+            Auto Upgrade OFF
+          </button>
+          <button id="btnBuyBooster" class="btn-warning">Booster (x2)</button>
         </div>
-        <div>
-          <strong>Upgrade Cost:</strong> <span id="upgradeCost">10</span>
+
+        <!-- Rare Item Bonus -->
+        <div id="rareItem" class="rare-bonus">💎 Bonus Rare Hari Ini 💎</div>
+
+        <!-- Tampilan Skin Terpasang -->
+        <div class="skin-display" id="equippedItemDisplay">
+          <h3>Item Terpasang</h3>
+          <div class="skin-container">
+            <img id="skinImage" class="skin-image" src="" alt="skin" />
+            <div id="skinName" class="skin-name">Tidak ada item</div>
+          </div>
         </div>
-        <div>
-          <strong>Booster:</strong> <span id="boosterStatus">Tidak aktif</span>
+
+        <!-- Tas -->
+        <div class="bag-section">
+          <h3>Tas Kamu</h3>
+          <div id="bagItems" class="bag-items">Tas kosong</div>
         </div>
-      </section>
 
-      <section id="controls" class="panel">
-        <button id="btnStartPause">Mulai Kumpul</button>
-        <button id="btnUpgrade">Upgrade Collector</button>
-        <button id="btnToggleAutoUpgrade">Auto Upgrade OFF</button>
-        <button id="btnBuyBooster">Beli Booster (50 Crystals)</button>
-      </section>
-
-      <section id="inventory" class="panel">
-        <h2>Tas Item</h2>
-        <div id="bagItems" class="item-list">Tas kosong</div>
-
-        <h3>Item Terpasang</h3>
-        <div id="equippedItemDisplay" class="equipped-item">
-          <img id="skinImage" src="" alt="" />
-          <div id="skinName">Tidak ada item</div>
+        <!-- Toko Biasa -->
+        <div class="shop-section">
+          <h3>Toko Item Reguler</h3>
+          <div id="shopItemsList" class="shop-items"></div>
         </div>
-      </section>
 
-      <section id="shop" class="panel">
-        <h2>Toko Biasa</h2>
-        <div id="regularShop" class="item-list"></div>
+        <!-- Toko Limited -->
+        <div class="shop-section">
+          <h3>Toko Item Terbatas</h3>
+          <div id="limitedItemsList" class="shop-items"></div>
+        </div>
 
-        <h2>Toko Terbatas</h2>
-        <div id="limitedItemsList" class="item-list"></div>
-      </section>
+        <!-- Transfer -->
+        <div class="transfer-section">
+          <h3>Transfer Item</h3>
+          <div class="transfer-controls">
+            <select id="transferItemSelect"></select>
+            <input
+              type="text"
+              id="transferToPlayerInput"
+              placeholder="Ke pemain..."
+            />
+            <button id="btnTransfer" class="btn-secondary">Transfer</button>
+          </div>
+        </div>
 
-      <section id="transfer" class="panel">
-        <h2>Transfer Item</h2>
-        <select id="transferItemSelect">
-          <option value="">- Tidak ada item -</option>
-        </select>
-        <input
-          type="text"
-          id="transferToPlayerInput"
-          placeholder="Nama pemain tujuan"
-        />
-        <button id="btnTransfer">Transfer</button>
-      </section>
-
-      <section id="leaderboard" class="panel">
-        <h2>Leaderboard</h2>
-        <ol id="leaderboardList"></ol>
-      </section>
+        <!-- Leaderboard -->
+        <div class="leaderboard-section">
+          <h3>Leaderboard</h3>
+          <ul id="leaderboardList" class="leaderboard-list"></ul>
+        </div>
+      </div>
     </div>
 
     <script src="script.js"></script>

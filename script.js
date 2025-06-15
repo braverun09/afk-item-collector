@@ -1,4 +1,7 @@
-// Constants & globals
+// Versi Game
+const GAME_VERSION = "v1.2.1";
+
+// Element DOM
 const crystalsEl = document.getElementById("crystals");
 const collectorLevelEl = document.getElementById("collectorLevel");
 const upgradeCostEl = document.getElementById("upgradeCost");
@@ -16,15 +19,16 @@ const playerNameInputContainer = document.getElementById(
   "playerNameInputContainer"
 );
 const gameUI = document.getElementById("gameUI");
-const playerNameDisplay = document.getElementById("playerNameDisplay");
+const gameVersion = document.getElementById("gameVersion");
 
+const rareItemEl = document.getElementById("rareItem");
 const equippedItemDisplay = document.getElementById("equippedItemDisplay");
 const skinImage = document.getElementById("skinImage");
 const skinName = document.getElementById("skinName");
 
 const bagItemsEl = document.getElementById("bagItems");
+const regularItemsListEl = document.getElementById("regularItemsList");
 const limitedItemsListEl = document.getElementById("limitedItemsList");
-const regularShopEl = document.getElementById("regularShop");
 
 const transferItemSelect = document.getElementById("transferItemSelect");
 const transferToPlayerInput = document.getElementById("transferToPlayerInput");
@@ -32,6 +36,7 @@ const btnTransfer = document.getElementById("btnTransfer");
 
 const leaderboardList = document.getElementById("leaderboardList");
 
+// Game Data
 let playerName = null;
 let players = JSON.parse(localStorage.getItem("players") || "{}");
 
@@ -42,21 +47,21 @@ let collecting = false;
 let collectInterval = null;
 let autoUpgradeEnabled = false;
 let autoUpgradeInterval = null;
-const AUTO_UPGRADE_INTERVAL = 2500;
+const AUTO_UPGRADE_INTERVAL = 3000;
 
 let boosterActive = false;
 let boosterEndTime = 0;
 
-// Define rarity colors and order (matching CSS classes)
 const RARITY_LEVELS = ["common", "uncommon", "rare", "epic", "legend"];
 const RARITY_NAMES = {
   common: "Biasa",
   uncommon: "Uncommon",
   rare: "Rare",
   epic: "Epic",
-  legend: "Legend",
+  legend: "Legendary",
 };
 
+// Shop Items
 const ITEMS = [
   {
     id: "skin_1",
@@ -70,32 +75,31 @@ const ITEMS = [
     name: "Skin Uncommon",
     rarity: "uncommon",
     img: "assets/uncommon-armor.png",
-    price: 300,
+    price: 200,
   },
   {
     id: "skin_3",
     name: "Skin Rare",
     rarity: "rare",
     img: "assets/rare-armor.png",
-    price: 700,
+    price: 400,
   },
   {
     id: "skin_4",
     name: "Skin Epic",
     rarity: "epic",
     img: "assets/epic-armor.png",
-    price: 1500,
+    price: 800,
   },
   {
     id: "skin_5",
     name: "Skin Legend",
     rarity: "legend",
     img: "assets/legend-armor.png",
-    price: 3000,
+    price: 1200,
   },
 ];
 
-// Limited items in shop - max 100 player limit
 const LIMITED_ITEMS = [
   {
     id: "limited_1",
@@ -115,381 +119,285 @@ const LIMITED_ITEMS = [
   },
 ];
 
-// Utility function to save players data
 function savePlayers() {
   localStorage.setItem("players", JSON.stringify(players));
 }
 
-// Load player data
 function loadPlayerData(name) {
   if (!players[name]) return;
-  const data = players[name];
-  crystals = data.crystals || 0;
-  collectorLevel = data.collectorLevel || 1;
+  const p = players[name];
+  crystals = p.crystals || 0;
+  collectorLevel = p.collectorLevel || 1;
   upgradeCost = Math.floor(10 * Math.pow(1.5, collectorLevel - 1));
-  boosterEndTime = data.boosterEndTime || 0;
+  boosterEndTime = p.boosterEndTime || 0;
   boosterActive = boosterEndTime > Date.now();
   collecting = false;
   clearInterval(collectInterval);
   autoUpgradeEnabled = false;
   clearInterval(autoUpgradeInterval);
 
-  playerNameDisplay.textContent = playerName;
   updateUI();
-  renderInventory();
-  renderShop();
+  renderEquippedItem();
+  renderBag();
+  renderRegularShop();
   renderLimitedShop();
-  renderTransferOptions();
-  renderLeaderboard();
+  renderTransferItems();
+  updateLeaderboard();
+  updateBoosterStatus();
 }
 
-// Save current player progress to global players list
-function saveCurrentPlayer() {
-  players[playerName] = {
-    crystals,
-    collectorLevel,
-    boosterEndTime,
-    bag: players[playerName]?.bag || [],
-  };
-  savePlayers();
-}
-
-// Create or get player bag
-function getPlayerBag() {
-  if (!players[playerName]) players[playerName] = {};
-  if (!players[playerName].bag) players[playerName].bag = [];
-  return players[playerName].bag;
-}
-
-// Update main UI elements
 function updateUI() {
-  crystalsEl.textContent = crystals.toFixed(1);
+  crystalsEl.textContent = crystals;
   collectorLevelEl.textContent = collectorLevel;
-  upgradeCost = Math.floor(10 * Math.pow(1.5, collectorLevel - 1));
   upgradeCostEl.textContent = upgradeCost;
-
-  boosterStatusEl.textContent = boosterActive ? "Aktif" : "Tidak aktif";
-
   btnUpgrade.disabled = crystals < upgradeCost;
   btnBuyBooster.disabled = crystals < 50;
 }
 
-// Auto collect crystals function
-function autoCollect() {
-  let gain = 1 * collectorLevel;
-  if (boosterActive) gain *= 2;
-  crystals += gain;
-  updateUI();
-  saveCurrentPlayer();
-}
-
-// Start collecting crystals every second
-function startCollecting() {
-  if (collecting) return;
-  collecting = true;
-  btnStartPause.textContent = "Pause Kumpul";
-  collectInterval = setInterval(() => {
-    autoCollect();
-    if (autoUpgradeEnabled) tryAutoUpgrade();
-    checkBoosterTimeout();
-  }, 1000);
-}
-
-// Pause collecting crystals
-function pauseCollecting() {
-  if (!collecting) return;
-  collecting = false;
-  btnStartPause.textContent = "Mulai Kumpul";
-  clearInterval(collectInterval);
-}
-
-// Toggle collecting on/off
-btnStartPause.addEventListener("click", () => {
-  if (collecting) pauseCollecting();
-  else startCollecting();
-});
-
-// Upgrade collector if crystals cukup
-btnUpgrade.addEventListener("click", () => {
-  if (crystals >= upgradeCost) {
-    crystals -= upgradeCost;
-    collectorLevel++;
-    upgradeCost = Math.floor(10 * Math.pow(1.5, collectorLevel - 1));
-    updateUI();
-    saveCurrentPlayer();
-  }
-});
-
-// Toggle auto upgrade collector
-btnToggleAutoUpgrade.addEventListener("click", () => {
-  autoUpgradeEnabled = !autoUpgradeEnabled;
-  btnToggleAutoUpgrade.textContent = autoUpgradeEnabled
-    ? "Auto Upgrade ON"
-    : "Auto Upgrade OFF";
-
-  if (autoUpgradeEnabled) {
-    autoUpgradeInterval = setInterval(() => {
-      tryAutoUpgrade();
-    }, AUTO_UPGRADE_INTERVAL);
+function updateBoosterStatus() {
+  if (boosterActive) {
+    const remaining = Math.max(0, boosterEndTime - Date.now());
+    if (remaining <= 0) {
+      boosterActive = false;
+      players[playerName].boosterEndTime = 0;
+      savePlayers();
+      boosterStatusEl.textContent = "Booster: Tidak aktif";
+    } else {
+      const secs = Math.floor((remaining / 1000) % 60);
+      const mins = Math.floor(remaining / 60000);
+      boosterStatusEl.textContent = `Booster: Aktif (${mins}m ${secs}s)`;
+    }
   } else {
-    clearInterval(autoUpgradeInterval);
-  }
-});
-
-// Try auto upgrade collector if crystals cukup
-function tryAutoUpgrade() {
-  if (crystals >= upgradeCost) {
-    crystals -= upgradeCost;
-    collectorLevel++;
-    upgradeCost = Math.floor(10 * Math.pow(1.5, collectorLevel - 1));
-    updateUI();
-    saveCurrentPlayer();
+    boosterStatusEl.textContent = "Booster: Tidak aktif";
   }
 }
 
-// Buy booster function (double crystals gain 60 detik)
-btnBuyBooster.addEventListener("click", () => {
-  if (crystals >= 50 && !boosterActive) {
-    crystals -= 50;
-    boosterActive = true;
-    boosterEndTime = Date.now() + 60000; // 60 detik booster
-    boosterStatusEl.textContent = "Aktif";
-    updateUI();
-    saveCurrentPlayer();
-  }
-});
+function renderBag() {
+  const bag = players[playerName].ownedItems;
+  bagItemsEl.innerHTML = bag.length ? "" : "Tas kosong";
 
-// Check booster timeout
-function checkBoosterTimeout() {
-  if (boosterActive && Date.now() > boosterEndTime) {
-    boosterActive = false;
-    boosterStatusEl.textContent = "Tidak aktif";
-    saveCurrentPlayer();
-  }
-}
-
-// Render regular shop items
-function renderShop() {
-  regularShopEl.innerHTML = "";
-  ITEMS.forEach((item) => {
+  transferItemSelect.innerHTML = bag.length
+    ? ""
+    : '<option value="">Tidak ada item</option>';
+  bag.forEach((id) => {
+    const item =
+      ITEMS.find((i) => i.id === id) || LIMITED_ITEMS.find((i) => i.id === id);
     const div = document.createElement("div");
-    div.classList.add("shop-item", item.rarity);
-    div.title = `${item.name} (${RARITY_NAMES[item.rarity]})\nHarga: ${
-      item.price
-    } crystals`;
-    div.innerHTML = `<img src="${item.img}" alt="${item.name}" /><div>${item.name}</div><div>${item.price} 💎</div>`;
-    div.addEventListener("click", () => {
-      buyItem(item);
-    });
-    regularShopEl.appendChild(div);
+    div.className = `bag-item ${item.rarity}`;
+    div.innerHTML = `<img src="${item.img}" alt="${item.name}" /><span>${item.name}</span>`;
+    div.onclick = () => equipItem(id);
+    bagItemsEl.appendChild(div);
+
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.textContent = item.name;
+    transferItemSelect.appendChild(opt);
   });
 }
 
-// Render limited shop items with owner count
+function equipItem(id) {
+  players[playerName].equippedItem = id;
+  savePlayers();
+  renderEquippedItem();
+}
+
+function renderEquippedItem() {
+  const itemId = players[playerName].equippedItem;
+  const item = [...ITEMS, ...LIMITED_ITEMS].find((i) => i.id === itemId);
+  if (!item) {
+    skinImage.src = "";
+    skinName.textContent = "Tidak ada item";
+    return;
+  }
+  skinImage.src = item.img;
+  skinName.textContent = `${item.name} (${RARITY_NAMES[item.rarity]})`;
+}
+
+function renderRegularShop() {
+  regularItemsListEl.innerHTML = "";
+  ITEMS.forEach((item) => {
+    const owned = players[playerName].ownedItems.includes(item.id);
+    const div = document.createElement("div");
+    div.className = `shop-item ${item.rarity}`;
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}" />
+      <div>${item.name}</div>
+      <div>Harga: ${item.price}</div>
+      <div>${owned ? "Dimiliki" : "Tersedia"}</div>
+    `;
+    if (!owned && crystals >= item.price) {
+      div.onclick = () => {
+        crystals -= item.price;
+        players[playerName].crystals = crystals;
+        players[playerName].ownedItems.push(item.id);
+        savePlayers();
+        updateUI();
+        renderBag();
+        renderRegularShop();
+      };
+    } else {
+      div.style.opacity = 0.5;
+    }
+    regularItemsListEl.appendChild(div);
+  });
+}
+
 function renderLimitedShop() {
   limitedItemsListEl.innerHTML = "";
   LIMITED_ITEMS.forEach((item) => {
-    // Count how many owners
-    let ownersCount = 0;
-    for (const p in players) {
-      if (players[p].bag?.includes(item.id)) ownersCount++;
-    }
+    const owned = players[playerName].ownedItems.includes(item.id);
+    const ownerCount = Object.values(players).filter((p) =>
+      p.ownedItems.includes(item.id)
+    ).length;
+    const soldOut = ownerCount >= item.maxOwners;
+
     const div = document.createElement("div");
-    div.classList.add("shop-item", item.rarity);
-    div.title = `${item.name} (${RARITY_NAMES[item.rarity]})\nHarga: ${
-      item.price
-    } crystals\nPemilik: ${ownersCount}/${item.maxOwners}`;
-    div.innerHTML = `<img src="${item.img}" alt="${item.name}" /><div>${item.name}</div><div>${item.price} 💎</div><div>(${ownersCount}/${item.maxOwners})</div>`;
-    if (ownersCount >= item.maxOwners) {
-      div.style.opacity = "0.4";
-      div.style.pointerEvents = "none";
+    div.className = `shop-item ${item.rarity}`;
+    div.innerHTML = `
+      <img src="${item.img}" alt="${item.name}" />
+      <div>${item.name}</div>
+      <div>Harga: ${item.price}</div>
+      <div>${soldOut ? "Terjual habis" : owned ? "Dimiliki" : "Tersedia"}</div>
+    `;
+    if (!owned && !soldOut && crystals >= item.price) {
+      div.onclick = () => {
+        crystals -= item.price;
+        players[playerName].crystals = crystals;
+        players[playerName].ownedItems.push(item.id);
+        savePlayers();
+        updateUI();
+        renderBag();
+        renderLimitedShop();
+      };
     } else {
-      div.addEventListener("click", () => {
-        buyItem(item);
-      });
+      div.style.opacity = 0.5;
     }
     limitedItemsListEl.appendChild(div);
   });
 }
 
-// Buy item function
-function buyItem(item) {
-  if (crystals < item.price) {
-    alert("Crystals tidak cukup!");
-    return;
-  }
-  if (item.maxOwners) {
-    // limited item check ownership
-    let ownersCount = 0;
-    for (const p in players) {
-      if (players[p].bag?.includes(item.id)) ownersCount++;
-    }
-    if (ownersCount >= item.maxOwners) {
-      alert("Item terbatas sudah habis!");
-      return;
-    }
-  }
-  crystals -= item.price;
-  const bag = getPlayerBag();
-  bag.push(item.id);
-  updateUI();
-  saveCurrentPlayer();
-  renderInventory();
-  renderLimitedShop();
-  renderTransferOptions();
-  renderLeaderboard();
-}
-
-// Render player inventory (bag items)
-function renderInventory() {
-  const bag = getPlayerBag();
-  bagItemsEl.innerHTML = "";
-  if (bag.length === 0) {
-    bagItemsEl.textContent = "Tas kosong";
-    equippedItemDisplay.classList.remove("active");
-    skinImage.src = "";
-    skinName.textContent = "Tidak ada item";
-    return;
-  }
-  equippedItemDisplay.classList.add("active");
-
-  bag.forEach((itemId) => {
-    const item =
-      ITEMS.find((i) => i.id === itemId) ||
-      LIMITED_ITEMS.find((i) => i.id === itemId);
-    if (!item) return;
-
-    const div = document.createElement("div");
-    div.classList.add("bag-item", item.rarity);
-    div.title = `${item.name} (${RARITY_NAMES[item.rarity]})`;
-    div.innerHTML = `<img src="${item.img}" alt="${item.name}" /><div>${item.name}</div>`;
-    div.addEventListener("click", () => {
-      equipItem(item);
-    });
-    bagItemsEl.appendChild(div);
-  });
-
-  // Show equipped item - first item by default
-  if (!equippedItemDisplay.dataset.equippedId && bag.length > 0) {
-    const firstItem =
-      ITEMS.find((i) => i.id === bag[0]) ||
-      LIMITED_ITEMS.find((i) => i.id === bag[0]);
-    equipItem(firstItem);
+function toggleCollecting() {
+  collecting = !collecting;
+  btnStartPause.textContent = collecting ? "Berhenti Kumpul" : "Mulai Kumpul";
+  if (collecting) {
+    collectInterval = setInterval(() => {
+      crystals += boosterActive ? collectorLevel * 2 : collectorLevel;
+      players[playerName].crystals = crystals;
+      updateUI();
+      updateLeaderboard();
+    }, 1000);
+  } else {
+    clearInterval(collectInterval);
   }
 }
 
-// Equip an item from inventory
-function equipItem(item) {
-  equippedItemDisplay.dataset.equippedId = item.id;
-  skinImage.src = item.img;
-  skinName.textContent = item.name;
-  equippedItemDisplay.classList.add("active");
+function upgradeCollector() {
+  if (crystals >= upgradeCost) {
+    crystals -= upgradeCost;
+    collectorLevel++;
+    upgradeCost = Math.floor(10 * Math.pow(1.5, collectorLevel - 1));
+    players[playerName].crystals = crystals;
+    players[playerName].collectorLevel = collectorLevel;
+    savePlayers();
+    updateUI();
+  }
 }
 
-// Render transfer item options
-function renderTransferOptions() {
-  const bag = getPlayerBag();
-  transferItemSelect.innerHTML = '<option value="">- Pilih item -</option>';
-  bag.forEach((itemId) => {
-    const item =
-      ITEMS.find((i) => i.id === itemId) ||
-      LIMITED_ITEMS.find((i) => i.id === itemId);
-    if (!item) return;
-    const option = document.createElement("option");
-    option.value = item.id;
-    option.textContent = item.name;
-    transferItemSelect.appendChild(option);
-  });
+function toggleAutoUpgrade() {
+  autoUpgradeEnabled = !autoUpgradeEnabled;
+  btnToggleAutoUpgrade.textContent = autoUpgradeEnabled
+    ? "Auto Upgrade ON"
+    : "Auto Upgrade OFF";
+  if (autoUpgradeEnabled) {
+    autoUpgradeInterval = setInterval(() => {
+      if (crystals >= upgradeCost) upgradeCollector();
+    }, AUTO_UPGRADE_INTERVAL);
+  } else {
+    clearInterval(autoUpgradeInterval);
+  }
 }
 
-// Transfer item to another player
-btnTransfer.addEventListener("click", () => {
-  const itemId = transferItemSelect.value;
-  const targetPlayer = transferToPlayerInput.value.trim();
-  if (!itemId || !targetPlayer) {
-    alert("Pilih item dan masukkan nama pemain tujuan.");
-    return;
-  }
-  if (targetPlayer === playerName) {
-    alert("Tidak bisa transfer ke diri sendiri.");
-    return;
-  }
-  if (!players[targetPlayer]) {
-    alert("Pemain tujuan tidak ditemukan.");
-    return;
-  }
-  const bag = getPlayerBag();
-  const itemIndex = bag.indexOf(itemId);
-  if (itemIndex === -1) {
-    alert("Item tidak ditemukan di tas.");
-    return;
-  }
-  // Remove item from current player
-  bag.splice(itemIndex, 1);
-  // Add to target player bag
-  if (!players[targetPlayer].bag) players[targetPlayer].bag = [];
-  players[targetPlayer].bag.push(itemId);
-
-  alert(`Berhasil transfer item ke ${targetPlayer}!`);
-  saveCurrentPlayer();
+function buyBooster() {
+  if (crystals < 50) return alert("Crystal tidak cukup!");
+  crystals -= 50;
+  boosterActive = true;
+  boosterEndTime = Date.now() + 60000;
+  players[playerName].crystals = crystals;
+  players[playerName].boosterEndTime = boosterEndTime;
   savePlayers();
-  renderInventory();
-  renderTransferOptions();
-  renderLeaderboard();
-});
-
-// Leaderboard render (by crystals descending)
-function renderLeaderboard() {
-  const entries = Object.entries(players).map(([name, data]) => ({
-    name,
-    crystals: data.crystals || 0,
-  }));
-  entries.sort((a, b) => b.crystals - a.crystals);
-
-  leaderboardList.innerHTML = "";
-  entries.forEach((entry, i) => {
-    const li = document.createElement("li");
-    li.innerHTML = `<span>${i + 1}. ${
-      entry.name
-    }</span><span>${entry.crystals.toFixed(1)} 💎</span>`;
-    leaderboardList.appendChild(li);
-  });
+  updateUI();
+  updateBoosterStatus();
 }
 
-// Player name set and load game
-btnSetName.addEventListener("click", () => {
+function setPlayerName() {
   const name = playerNameInput.value.trim();
-  if (!name) {
-    alert("Masukkan nama pemain!");
-    return;
-  }
+  if (!name) return alert("Isi nama terlebih dahulu!");
   playerName = name;
-  playerNameInputContainer.style.display = "none";
-  gameUI.style.display = "block";
+
   if (!players[playerName]) {
     players[playerName] = {
       crystals: 0,
       collectorLevel: 1,
-      bag: [],
+      ownedItems: [],
+      equippedItem: null,
       boosterEndTime: 0,
     };
     savePlayers();
   }
+
+  playerNameInputContainer.style.display = "none";
+  gameUI.style.display = "block";
   loadPlayerData(playerName);
-});
+  gameVersion.textContent = `Versi: ${GAME_VERSION}`;
+}
 
-// Logout
-btnLogout.addEventListener("click", () => {
-  pauseCollecting();
+function transferItem() {
+  const itemId = transferItemSelect.value;
+  const toPlayer = transferToPlayerInput.value.trim();
+  if (!itemId || !toPlayer) return alert("Lengkapi form transfer.");
+  if (!players[toPlayer]) return alert("Player tujuan tidak ditemukan.");
+  if (toPlayer === playerName) return alert("Tidak bisa ke diri sendiri.");
+
+  const index = players[playerName].ownedItems.indexOf(itemId);
+  if (index === -1) return;
+
+  players[playerName].ownedItems.splice(index, 1);
+  players[toPlayer].ownedItems.push(itemId);
+  savePlayers();
+  renderBag();
+  renderTransferItems();
+  alert("Transfer berhasil!");
+}
+
+function renderTransferItems() {
+  // Sudah diperbarui saat renderBag
+}
+
+function updateLeaderboard() {
+  const arr = Object.entries(players).sort(
+    (a, b) => b[1].crystals - a[1].crystals
+  );
+  leaderboardList.innerHTML = "";
+  arr.slice(0, 10).forEach(([name, data]) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${name}<span>${data.crystals}</span>`;
+    leaderboardList.appendChild(li);
+  });
+}
+
+// Event Listeners
+btnStartPause.onclick = toggleCollecting;
+btnUpgrade.onclick = upgradeCollector;
+btnToggleAutoUpgrade.onclick = toggleAutoUpgrade;
+btnBuyBooster.onclick = buyBooster;
+btnSetName.onclick = setPlayerName;
+btnTransfer.onclick = transferItem;
+btnLogout.onclick = () => {
   playerName = null;
-  playerNameInput.value = "";
-  playerNameInputContainer.style.display = "flex";
   gameUI.style.display = "none";
-});
+  playerNameInputContainer.style.display = "block";
+  playerNameInput.value = "";
+};
 
-// On page load if player saved?
-window.addEventListener("load", () => {
-  const savedPlayers = JSON.parse(localStorage.getItem("players") || "{}");
-  if (!savedPlayers) return;
-  players = savedPlayers;
-});
+// Realtime leaderboard refresh
+setInterval(updateLeaderboard, 5000);
