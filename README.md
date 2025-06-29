@@ -1,2 +1,2 @@
-Version: v.1.2.1
-Enjoy :)
+Version: v.1.2.2
+Enjoy the game :)
