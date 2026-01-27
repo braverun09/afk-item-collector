@@ -1,116 +1,166 @@
 <!DOCTYPE html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AFK Item Collector</title>
-    <link rel="stylesheet" href="style.css" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- Login Screen -->
-    <section class="login-screen" id="loginScreen">
-      <div class="login-card">
-        <h1>AFK Item Collector</h1>
-        <input
-          type="text"
-          id="playerNameInput"
-          placeholder="Masukkan nama kamu..."
-        />
-        <button id="btnSetName" class="btn btn-primary">Mulai Bermain</button>
-        <p class="version-text">Versi 1.2.2</p>
-      </div>
-    </section>
+<html lang="en">
 
-    <!-- Game UI -->
-    <main id="gameUI" class="hidden">
-      <header class="game-header">
-        <h2 id="playerTitle">
-          Selamat datang, <span id="playerNameDisplay"></span>
-        </h2>
-        <button id="btnLogout" class="btn btn-danger small">Keluar</button>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Collector - AFK</title>
+  <!-- Fonts: Inter (Body) and Poppins (Headers) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <!-- Main Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loader-content">
+      <h1>The Collector</h1>
+      <div class="progress-bar-container">
+        <div class="progress-bar"></div>
+      </div>
+      <p>Initializing World...</p>
+    </div>
+  </div>
+
+  <!-- Main Game Container -->
+  <div id="game-container" class="game-container" style="display: none;">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo-area">
+        <h2>COLLECTOR</h2>
+      </div>
+      <nav class="main-nav">
+        <button class="nav-btn active" data-target="dashboard">
+          <span class="icon">📊</span> Dashboard
+        </button>
+        <button class="nav-btn" data-target="upgrades">
+          <span class="icon">⚡</span> Upgrades
+        </button>
+        <button class="nav-btn" data-target="inventory">
+          <span class="icon">🎒</span> Inventory
+        </button>
+        <button class="nav-btn" data-target="map">
+          <span class="icon">🗺️</span> Map
+        </button>
+        <button class="nav-btn" data-target="shop">
+          <span class="icon">🛒</span> Shop
+        </button>
+        <button class="nav-btn" data-target="prestige">
+          <span class="icon">✨</span> Prestige
+        </button>
+      </nav>
+      <div class="settings-area">
+        <button class="nav-btn" data-target="settings">
+          <span class="icon">⚙️</span> Settings
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+
+      <!-- Top Bar: Resources & Status -->
+      <header class="top-bar">
+        <div class="resource-group">
+          <div class="resource-item crystals">
+            <span class="icon">💎</span>
+            <span id="res-crystals">0</span>
+            <span class="label">Crystals</span>
+          </div>
+          <div class="resource-item souls">
+            <span class="icon">👻</span>
+            <span id="res-souls">0</span>
+            <span class="label">Souls</span>
+          </div>
+        </div>
+        <div class="player-status">
+          <span id="player-level">Lvl 1</span>
+        </div>
       </header>
 
-      <!-- Stats -->
-      <section class="stats">
-        <div class="stat-box">
-          <p>Crystals</p>
-          <h3 id="crystals">0</h3>
-        </div>
-        <div class="stat-box">
-          <p>Level</p>
-          <h3 id="collectorLevel">1</h3>
-        </div>
-        <div class="stat-box">
-          <p>Upgrade</p>
-          <h3 id="upgradeCost">10</h3>
-        </div>
-        <div class="stat-box wide" id="boosterStatus">Booster: Tidak Aktif</div>
-      </section>
+      <!-- Dynamic Views -->
+      <div id="view-container" class="view-container">
 
-      <!-- Controls -->
-      <section class="controls">
-        <button id="btnStartPause" class="btn btn-success">Mulai Kumpul</button>
-        <button id="btnUpgrade" class="btn btn-primary">Upgrade</button>
-        <button id="btnToggleAutoUpgrade" class="btn btn-secondary">
-          Auto Upgrade OFF
-        </button>
-        <button id="btnBuyBooster" class="btn btn-warning">
-          Booster (50 Crystals)
-        </button>
-      </section>
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view active">
+          <div class="dashboard-grid">
+            <!-- Main Clicker Area -->
+            <div class="card main-clicker-card">
+              <div class="crystal-container">
+                <div id="main-crystal" class="crystal-core"></div>
+              </div>
+              <div class="click-info">
+                <p>Click Power: <span id="click-power-disp">1</span></p>
+              </div>
+            </div>
 
-      <!-- Equipped Item -->
-      <section class="equipped">
-        <h3>Item Terpasang</h3>
-        <div class="equipped-display" id="equippedItemDisplay">
-          <img src="" alt="" id="skinImage" />
-          <p id="skinName">Belum ada item</p>
-        </div>
-      </section>
+            <!-- Quick Stats / Active Buffs -->
+            <div class="card stats-card">
+              <h3>Production</h3>
+              <p>Crystals/Sec: <span id="cps-disp">0</span></p>
+            </div>
+          </div>
+        </section>
 
-      <!-- Bag -->
-      <section class="bag-section">
-        <h3>Tas Koleksi</h3>
-        <div class="bag-items" id="bagItems"></div>
-      </section>
+        <!-- Other sections will be injected or toggled here -->
+        <section id="upgrades" class="view" style="display:none;">
+          <h2>Upgrades</h2>
+          <div id="upgrades-list" class="grid-list"></div>
+        </section>
 
-      <!-- Regular Shop -->
-      <section class="shop-section">
-        <h3>Toko Regular</h3>
-        <div class="shop-items" id="regularItemsList"></div>
-      </section>
+        <section id="inventory" class="view" style="display:none;">
+          <h2>Inventory</h2>
+          <div class="inventory-layout">
+            <div class="equipment-slots"></div>
+            <div class="bag-grid"></div>
+          </div>
+        </section>
 
-      <!-- Limited Shop -->
-      <section class="shop-section">
-        <h3>Toko Terbatas</h3>
-        <div class="shop-items" id="limitedItemsList"></div>
-      </section>
+        <section id="map" class="view" style="display:none;">
+          <h2>World Map</h2>
+          <div id="map-grid" class="map-grid"></div>
+        </section>
 
-      <!-- Transfer -->
-      <section class="transfer-section">
-        <h3>Transfer Item</h3>
-        <div class="transfer-controls">
-          <select id="transferItemSelect"></select>
-          <input
-            type="text"
-            id="transferToPlayerInput"
-            placeholder="Nama pemain tujuan..."
-          />
-          <button id="btnTransfer" class="btn btn-dark">Transfer</button>
-        </div>
-      </section>
+        <section id="shop" class="view" style="display:none;">
+          <h2>Shop</h2>
+          <div class="shop-container">
+            <div class="shop-section" id="daily-shop"></div>
+            <div class="shop-section" id="limited-shop"></div>
+          </div>
+        </section>
 
-      <!-- Leaderboard -->
-      <section class="leaderboard-section">
-        <h3>Leaderboard</h3>
-        <ul id="leaderboardList" class="leaderboard-list"></ul>
-      </section>
+        <section id="prestige" class="view" style="display:none;">
+          <h2>Ascension</h2>
+          <div class="prestige-container">
+            <button id="prestige-btn" class="btn-premium danger">Ascend</button>
+          </div>
+        </section>
+
+        <section id="settings" class="view" style="display:none;">
+          <h2>Settings</h2>
+          <div class="settings-controls">
+            <button id="save-btn" class="btn-premium">Force Save</button>
+            <button id="wipe-btn" class="btn-premium danger">Wipe Save</button>
+          </div>
+        </section>
+
+      </div>
     </main>
+  </div>
 
-    <script src="script.js"></script>
-  </body>
+  <!-- Floating UI Layer -->
+  <div id="floating-text-layer" class="floating-layer"></div>
+  <div id="notifications-layer" class="notifications-layer"></div>
+
+  <!-- Core Script -->
+  <script src="script.js"></script>
+</body>
+
 </html>
